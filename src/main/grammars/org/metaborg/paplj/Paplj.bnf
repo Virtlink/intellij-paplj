@@ -52,17 +52,25 @@
 
 }
 
-file                        ::= programStatement? importStatement* runStatement?
+file                        ::= programStatement? importStatement* classDeclaration* runStatement?
 
 programStatement            ::= 'program' qualifiedID ';'?
 
 importStatement             ::= 'import' wildcardID ';'?
 
-private qualifiedID         ::= ID ('.' ID)*
+classDeclaration            ::= 'class' ID ('extends' qualifiedID)? '{' memberDeclaration* '}'
 
-private wildcardID          ::= ID ('.' ID)* ('.' '*')?
+memberDeclaration           ::= field | method
+
+field                       ::= qualifiedID ID ';'?
+
+method                      ::= qualifiedID ID '(' (param (',' param)*)? ')' block
+
+param                       ::= qualifiedID ID
 
 runStatement                ::= 'run' expr
+
+block                       ::= '{' (expr (';' expr)*)? ';'? '}'
 
 expr                        ::= additive
 
@@ -81,3 +89,7 @@ new_expr                    ::= 'new' qualifiedID '(' ')'
 var_expr                    ::= ID ('(' (expr (',' expr)*)? ')')?
 // block
 private paren_expr          ::= '(' expr ')'
+
+private qualifiedID         ::= ID ('.' ID)*
+
+private wildcardID          ::= ID ('.' ID)* ('.' '*')?

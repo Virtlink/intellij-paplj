@@ -1,6 +1,10 @@
-package org.metaborg.paplj.lexer;
-import com.intellij.lexer.*;
+package org.metaborg.paplj;
+
+import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
+
+import static com.intellij.psi.TokenType.BAD_CHARACTER;
+import static com.intellij.psi.TokenType.WHITE_SPACE;
 import static org.metaborg.paplj.psi.PapljTypes.*;
 import static org.metaborg.paplj.psi.PapljTokenElementTypes.*;
 
@@ -19,16 +23,15 @@ import static org.metaborg.paplj.psi.PapljTokenElementTypes.*;
 %type IElementType
 %unicode
 
-EOL="\r"|"\n"|"\r\n"
-LINE_WS=[\ \t\f]
-WHITE_SPACE=({LINE_WS}|{EOL})+
+EOL=\R
+WHITE_SPACE=\s+
 
 ID=[:letter:][a-zA-Z_0-9]*
 INT=[0-9]+
 
 %%
 <YYINITIAL> {
-  {WHITE_SPACE}      { return com.intellij.psi.TokenType.WHITE_SPACE; }
+  {WHITE_SPACE}      { return WHITE_SPACE; }
 
   "["                { return LBRACK; }
   "]"                { return RBRACK; }
@@ -56,5 +59,6 @@ INT=[0-9]+
   {ID}               { return ID; }
   {INT}              { return INT; }
 
-  [^] { return com.intellij.psi.TokenType.BAD_CHARACTER; }
 }
+
+[^] { return BAD_CHARACTER; }

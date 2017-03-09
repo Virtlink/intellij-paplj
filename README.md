@@ -39,6 +39,12 @@ The project consists of the following modules:
 
 - `paplj` — The IntelliJ IDEA plugin.
 
+### Changing the Grammar
+When changing the BNF grammar, it's occasionally necessary to re-generate the lexer. Compared to the generated lexer, the following changes were made:
+
+- Add `
+import static org.metaborg.paplj.psi.PapljTokenElementTypes.*;` import to the top of the lexer.
+
 
 ## See Also
 - [Grammar-Kit](https://github.com/JetBrains/Grammar-Kit)
