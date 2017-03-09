@@ -1,0 +1,83 @@
+{
+  parserClass="org.metaborg.paplj.parser.PapljParser"
+  parserUtilClass="org.metaborg.paplj.parser.PapljParserUtil"
+  parserImports=["static org.metaborg.paplj.psi.PapljTokenElementTypes.*"]
+
+  implements="org.metaborg.paplj.psi.PapljCompositeElement"
+  extends="org.metaborg.paplj.psi.impl.PapljCompositeElementImpl"
+
+  elementTypeHolderClass="org.metaborg.paplj.psi.PapljTypes"
+  elementTypeClass="org.metaborg.paplj.psi.PapljCompsiteElementType"
+
+  tokenTypeClass="org.metaborg.paplj.psi.PapljTokenType"
+
+  psiClassPrefix="Paplj"
+  psiImplClassSuffix="Impl"
+  psiPackage="org.metaborg.paplj.psi"
+  psiImplPackage="org.metaborg.paplj.psi.impl"
+
+  generateTokens=false
+  generateTokenAccessors=true
+
+  tokens = [
+    LBRACK                          = '['
+    RBRACK                          = ']'
+    SHA                             = '#'
+    EXCL                            = '!'
+    SEMICOLON                       = ';'
+    DOT                             = '.'
+    ASTERISK                        = '*'
+    PLUS                            = '+'
+    MINUS                           = '-'
+    SLASH                           = '/'
+    BRACE_L                         = '('
+    BRACE_R                         = ')'
+    COMMA                           = ','
+
+    PUBLIC                          = 'public'
+    IMPORT                          = 'import'
+    PROGRAM                         = 'program'
+    RUN                             = 'run'
+    TRUE                            = 'true'
+    FALSE                           = 'false'
+    NEW                             = 'new'
+    NULL                            = 'null'
+    THIS                            = 'this'
+
+    ID                              = 'regexp:\p{Alpha}\w*'
+    INT                             = 'regexp:\d+'
+  ]
+
+  extends(".*_expr")=expr
+
+}
+
+file                        ::= programStatement? importStatement* runStatement?
+
+programStatement            ::= 'program' qualifiedID ';'?
+
+importStatement             ::= 'import' wildcardID ';'?
+
+private qualifiedID         ::= ID ('.' ID)*
+
+private wildcardID          ::= ID ('.' ID)* ('.' '*')?
+
+runStatement                ::= 'run' expr
+
+expr                        ::= additive
+
+private additive            ::= multiplicative additive_expr*
+left additive_expr          ::= ('+' | '-') multiplicative
+
+private multiplicative      ::= primary multiplicative_expr*
+left multiplicative_expr    ::= ('*' | '/') primary*
+
+private primary             ::= num_expr | bool_expr | this_expr | null_expr | new_expr | var_expr | paren_expr
+num_expr                    ::= INT
+bool_expr                   ::= 'true' | 'false'
+this_expr                   ::= 'this'
+null_expr                   ::= 'null' qualifiedID?
+new_expr                    ::= 'new' qualifiedID '(' ')'
+var_expr                    ::= ID ('(' (expr (',' expr)*)? ')')?
+// block
+private paren_expr          ::= '(' expr ')'

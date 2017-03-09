@@ -1,0 +1,14 @@
+
+## IntelliJ
+*.iml
+.idea/
+out/
+
+## Gradle
+.gradle/
+build/
+gen/
+
+## Misc
+*.jar
+*.skeleton
