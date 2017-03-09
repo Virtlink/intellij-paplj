@@ -1,8 +1,10 @@
 buildscript {
     ext.kotlin_version = '1.0.6'
+    ext.javaVersion = '1.8'
+
     repositories {
-        maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
         mavenCentral()
+        maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -13,27 +15,100 @@ plugins {
     id "org.jetbrains.intellij" version "0.2.5"
 }
 
-apply plugin: 'java'
-apply plugin: 'kotlin'
-apply plugin: 'idea'
+allprojects {
+    apply plugin: 'idea'
+    idea {
+        module {
+            generatedSourceDirs += file('src/gen')
+        }
+    }
 
-group 'org.metaborg'
-version '1.0.0'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+    apply plugin: 'org.jetbrains.intellij'
+    intellij {
+        version ideaVersion
+        downloadSources Boolean.valueOf(downloadIdeaSources)
+        updateSinceUntilBuild = false
+        instrumentCode = false
+    }
 
-repositories {
-    mavenCentral()
-}
+    apply plugin: 'java'
+    apply plugin: 'kotlin'
 
-sourceSets {
-    main {
-        java.srcDirs = ['src/main/java', 'src/main/gen']
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+
+    tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
+
+    sourceSets {
+        main {
+            java.srcDirs += 'src/main/gen'
+        }
+    }
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+
+    dependencies {
+        compileOnly('com.github.JetBrains:Grammar-Kit:1.5.1') {
+            exclude group: 'org.jetbrains.plugins'
+            exclude module: 'idea'
+        }
+
+        compile     "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+        testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+        testCompile 'junit:junit:4.11'
     }
 }
 
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    testCompile 'junit:junit:4.11'
-    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+group 'org.metaborg'
+version '1.0-SNAPSHOT'
+
+lexerTask(project, 'PapljLexer', 'org/metaborg/paplj/lexer')
+parserTask(project, 'Paplj', 'org/metaborg/paplj/psi')
+
+static def codegenTask(project, task) {
+    project.compileKotlin.dependsOn task
+    project.compileTestKotlin.dependsOn task
+    return task
+}
+
+def lexerTask(project, lexerName, pkg) {
+    return codegenTask(project, tasks.create("generate${lexerName}", JavaExec) {
+        def src = "$project.projectDir/src/main/grammars/${lexerName}.flex"
+        def dstRoot = "$project.projectDir/src/main/gen"
+        def dst = "$dstRoot/$pkg"
+
+        main = 'jflex.Main'
+        classpath = files('lib/jflex/jflex-1.7.0-SNAPSHOT.jar')
+
+        args = ['--skel', 'lib/jflex/idea-flex.skeleton',
+                '-d', dst,
+                src
+        ]
+
+        inputs.file file(src)
+        outputs.dir file("$dst/_${lexerName}.java")
+    })
+}
+
+def parserTask(project, parserName, pkg) {
+    return codegenTask(project, tasks.create("generate${parserName}", JavaExec) {
+        def src = "$project.projectDir/src/main/grammars/${parserName}.bnf"
+        def dstRoot = "$project.projectDir/src/main/gen"
+        def dst = "$dstRoot/$pkg"
+        doFirst {
+            delete file(dst)
+        }
+
+        main = 'org.intellij.grammar.Main'
+        classpath(configurations.compileOnly)
+
+        args = [dstRoot, file(src)]
+
+        inputs.file file(src)
+        outputs.dir dst
+    })
 }
