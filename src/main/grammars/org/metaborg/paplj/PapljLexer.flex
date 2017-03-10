@@ -33,8 +33,6 @@ INT=[0-9]+
 <YYINITIAL> {
   {WHITE_SPACE}      { return WHITE_SPACE; }
 
-  "["                { return LBRACK; }
-  "]"                { return RBRACK; }
   "#"                { return SHA; }
   "!"                { return EXCL; }
   ";"                { return SEMICOLON; }
@@ -45,16 +43,34 @@ INT=[0-9]+
   "/"                { return SLASH; }
   "("                { return BRACE_L; }
   ")"                { return BRACE_R; }
+  "{"                { return CBRACE_L; }
+  "}"                { return CBRACE_R; }
+  "["                { return BRACK_L; }
+  "]"                { return BRACK_R; }
+  "<"                { return ABRACK_L; }
+  ">"                { return ABRACK_R; }
   ","                { return COMMA; }
-  "public"           { return PUBLIC; }
-  "import"           { return IMPORT; }
-  "program"          { return PROGRAM; }
-  "run"              { return RUN; }
-  "true"             { return TRUE; }
-  "false"            { return FALSE; }
-  "new"              { return NEW; }
-  "null"             { return NULL; }
-  "this"             { return THIS; }
+  "="                { return EQ; }
+  "||"               { return OROR; }
+  "&&"               { return ANDAND; }
+  "=="               { return EQEQ; }
+  "!="               { return EXCLEQ; }
+  "public"           { return K_PUBLIC; }
+  "import"           { return K_IMPORT; }
+  "program"          { return K_PROGRAM; }
+  "class"            { return K_CLASS; }
+  "extends"          { return K_EXTENDS; }
+  "run"              { return K_RUN; }
+  "true"             { return K_TRUE; }
+  "false"            { return K_FALSE; }
+  "new"              { return K_NEW; }
+  "null"             { return K_NULL; }
+  "this"             { return K_THIS; }
+  "if"               { return K_IF; }
+  "else"             { return K_ELSE; }
+  "let"              { return K_LET; }
+  "in"               { return K_IN; }
+  "as"               { return K_AS; }
 
   {ID}               { return ID; }
   {INT}              { return INT; }

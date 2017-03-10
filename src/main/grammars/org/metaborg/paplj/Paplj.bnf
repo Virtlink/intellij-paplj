@@ -20,8 +20,6 @@
   generateTokenAccessors=true
 
   tokens = [
-    LBRACK                          = '['
-    RBRACK                          = ']'
     SHA                             = '#'
     EXCL                            = '!'
     SEMICOLON                       = ';'
@@ -32,17 +30,35 @@
     SLASH                           = '/'
     BRACE_L                         = '('
     BRACE_R                         = ')'
+    CBRACE_L                        = '{'
+    CBRACE_R                        = '}'
+    BRACK_L                         = '['
+    BRACK_R                         = ']'
+    ABRACK_L                        = '<'
+    ABRACK_R                        = '>'
     COMMA                           = ','
+    EQ                              = '='
+    OROR                            = '||'
+    ANDAND                          = '&&'
+    EQEQ                            = '=='
+    EXCLEQ                          = '!='
 
-    PUBLIC                          = 'public'
-    IMPORT                          = 'import'
-    PROGRAM                         = 'program'
-    RUN                             = 'run'
-    TRUE                            = 'true'
-    FALSE                           = 'false'
-    NEW                             = 'new'
-    NULL                            = 'null'
-    THIS                            = 'this'
+    K_PUBLIC                        = 'public'
+    K_IMPORT                        = 'import'
+    K_PROGRAM                       = 'program'
+    K_CLASS                         = 'class'
+    K_EXTENDS                       = 'extends'
+    K_RUN                           = 'run'
+    K_TRUE                          = 'true'
+    K_FALSE                         = 'false'
+    K_NEW                           = 'new'
+    K_NULL                          = 'null'
+    K_THIS                          = 'this'
+    K_IF                            = 'if'
+    K_ELSE                          = 'else'
+    K_LET                           = 'let'
+    K_IN                            = 'in'
+    K_AS                            = 'as'
 
     ID                              = 'regexp:\p{Alpha}\w*'
     INT                             = 'regexp:\d+'
@@ -60,34 +76,58 @@ importStatement             ::= 'import' wildcardID ';'?
 
 classDeclaration            ::= 'class' ID ('extends' qualifiedID)? '{' memberDeclaration* '}'
 
-memberDeclaration           ::= field | method
+memberDeclaration           ::= method | field
+
+method                      ::= qualifiedID ID '(' (param (',' param)*)? ')' block_expr
 
 field                       ::= qualifiedID ID ';'?
-
-method                      ::= qualifiedID ID '(' (param (',' param)*)? ')' block
 
 param                       ::= qualifiedID ID
 
 runStatement                ::= 'run' expr
 
-block                       ::= '{' (expr (';' expr)*)? ';'? '}'
+expr                        ::= if_expr | let_expr | assignment
 
-expr                        ::= additive
+if_expr                     ::= 'if' '(' expr ')' expr 'else' expr
+
+let_expr                    ::= 'let' binding* 'in' expr
+
+binding                     ::= qualifiedID ID '=' expr
+
+private assignment          ::= logical_or assignment_expr?
+left assignment_expr        ::= '=' logical_or
+
+private logical_or          ::= logical_and logical_or_expr*
+left logical_or_expr        ::= '||' logical_and
+
+private logical_and         ::= comparative logical_and_expr*
+left logical_and_expr       ::= '&&' comparative
+
+private comparative         ::= additive comparative_expr?
+left comparative_expr       ::= ('==' | '!=' | '<') additive
 
 private additive            ::= multiplicative additive_expr*
 left additive_expr          ::= ('+' | '-') multiplicative
 
-private multiplicative      ::= primary multiplicative_expr*
-left multiplicative_expr    ::= ('*' | '/') primary*
+private multiplicative      ::= unary multiplicative_expr*
+left multiplicative_expr    ::= ('*' | '/') unary*
 
-private primary             ::= num_expr | bool_expr | this_expr | null_expr | new_expr | var_expr | paren_expr
+private unary               ::= not_expr | min_expr | (member cast_expr?)
+left cast_expr              ::= 'as' qualifiedID
+not_expr                    ::= '!' unary
+min_expr                    ::= '-' unary
+
+private member              ::= primary member_expr*
+left member_expr            ::= '.' ID ('(' (expr (',' expr)*)? ')')?
+
+private primary             ::= num_expr | bool_expr | this_expr | null_expr | new_expr | var_expr | block_expr | paren_expr
 num_expr                    ::= INT
 bool_expr                   ::= 'true' | 'false'
 this_expr                   ::= 'this'
 null_expr                   ::= 'null' qualifiedID?
 new_expr                    ::= 'new' qualifiedID '(' ')'
 var_expr                    ::= ID ('(' (expr (',' expr)*)? ')')?
-// block
+block_expr                  ::= '{' (expr (';' expr)*)? ';'? '}'
 private paren_expr          ::= '(' expr ')'
 
 private qualifiedID         ::= ID ('.' ID)*
