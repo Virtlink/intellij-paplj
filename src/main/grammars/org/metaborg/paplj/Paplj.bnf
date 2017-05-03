@@ -7,7 +7,7 @@
   extends="org.metaborg.paplj.psi.impl.PapljCompositeElementImpl"
 
   elementTypeHolderClass="org.metaborg.paplj.psi.PapljTypes"
-  elementTypeClass="org.metaborg.paplj.psi.PapljCompsiteElementType"
+  elementTypeClass="org.metaborg.paplj.psi.PapljCompositeElementType"
 
   tokenTypeClass="org.metaborg.paplj.psi.PapljTokenType"
 
