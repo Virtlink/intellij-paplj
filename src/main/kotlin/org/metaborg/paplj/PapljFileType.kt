@@ -5,12 +5,14 @@ import javax.swing.Icon
 
 object PapljFileType : LanguageFileType(PapljLanguage) {
 
+    const val EXTENSION = "pj"
+
     override fun getName(): String {
         return "PAPLJ"
     }
 
     override fun getDefaultExtension(): String {
-        return "pj"
+        return EXTENSION
     }
 
     override fun getDescription(): String {

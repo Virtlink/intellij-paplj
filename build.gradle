@@ -68,6 +68,12 @@ allprojects {
 group 'org.metaborg'
 version '1.0-SNAPSHOT'
 
+test {
+    testLogging {
+        exceptionFormat = 'full'
+    }
+}
+
 lexerTask(project, 'PapljLexer', 'org/metaborg/paplj')
 parserTask(project, 'Paplj', 'org/metaborg/paplj')
 

@@ -6,7 +6,7 @@ import com.intellij.openapi.fileTypes.FileTypeFactory
 class PapljFileTypeFactory : FileTypeFactory() {
 
     override fun createFileTypes(consumer: FileTypeConsumer) {
-        consumer.consume(PapljFileType, "pj")
+        consumer.consume(PapljFileType, PapljFileType.EXTENSION)
     }
 
 }
