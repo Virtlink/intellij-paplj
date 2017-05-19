@@ -4,9 +4,9 @@ import org.metaborg.paplj.parser.PapljParserDefinition
 
 class PapljParserTest : ParsingTestCase("", PapljFileType.EXTENSION, PapljParserDefinition()) {
 
-    fun testParsingTestData() {
-        // Parse the file ParsingTestData.pj
-        // and compare the resulting PSI tree to ParsingTestData.txt
+    fun testBinTreeProgram() {
+        // Parse the file BinTreeProgram.pj
+        // and compare the resulting PSI tree to BinTreeProgram.txt
         doTest(true)
     }
 
