@@ -18,6 +18,7 @@
     <fileTypeFactory implementation="org.metaborg.paplj.PapljFileTypeFactory"/>
     <lang.parserDefinition language="Paplj" implementationClass="org.metaborg.paplj.parser.PapljParserDefinition"/>
     <lang.syntaxHighlighterFactory language="Paplj" implementationClass="org.metaborg.paplj.lexer.PapljSyntaxHighlighterFactory"/>
+    <lang.psiStructureViewFactory language="Paplj" implementationClass="org.metaborg.paplj.structureoutline.PapljStructureViewFactory"/>
     <colorSettingsPage implementation="org.metaborg.paplj.PapljColorSettingsPage"/>
     <completion.contributor language="Paplj" implementationClass="org.metaborg.paplj.codecompletion.PapljCompletionContributor"/>
   </extensions>
