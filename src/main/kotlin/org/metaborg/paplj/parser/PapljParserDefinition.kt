@@ -17,14 +17,19 @@ import org.metaborg.paplj.lexer.PapljLexerAdapter
 import org.metaborg.paplj.psi.PapljFile
 import org.metaborg.paplj.psi.PapljTypes
 
-class PapljParserDefinition : ParserDefinition {
+class PapljParserDefinition : IAesiParserDefinition {
+
     companion object {
         val WHITE_SPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
 //        val COMMENTS: TokenSet = TokenSet.create(PapljTypes.COMMENT)
         val FILE: IFileElementType = IFileElementType(Language.findInstance(PapljLanguage.javaClass))
     }
 
-    override fun createLexer(project: Project?): Lexer {
+    override fun createLexer(project: Project) : Lexer {
+        return createLexer(project, null)
+    }
+
+    override fun createLexer(project: Project, file: PsiFile?): Lexer {
         return PapljLexerAdapter()
     }
 
