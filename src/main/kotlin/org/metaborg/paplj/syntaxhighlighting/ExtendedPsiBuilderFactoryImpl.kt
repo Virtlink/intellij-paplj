@@ -5,7 +5,9 @@ import com.intellij.lang.impl.PsiBuilderFactoryImpl
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import com.virtlink.editorservices.Location
 import org.metaborg.paplj.parser.IAesiParserDefinition
+import org.metaborg.paplj.toOffset
 
 class ExtendedPsiBuilderFactoryImpl: PsiBuilderFactoryImpl() {
 

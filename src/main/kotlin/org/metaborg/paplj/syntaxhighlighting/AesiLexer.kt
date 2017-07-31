@@ -3,6 +3,7 @@ package org.metaborg.paplj.syntaxhighlighting
 import com.intellij.lexer.Lexer
 import com.intellij.lexer.LexerBase
 import com.intellij.lexer.LexerPosition
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
 import com.virtlink.editorservices.IDocument
@@ -25,6 +26,8 @@ import java.lang.Integer.min
 
 class AesiLexer(val project: IProject, val document: IDocument, val ideaDocument: Document) : LexerBase() {
 
+    private val log = Logger.getInstance(AesiLexer::class.java)
+
     // TODO: Inject
     private val tokenTypeManager: AesiTokenTypeManager = AesiTokenTypeManager()
 
@@ -39,6 +42,9 @@ class AesiLexer(val project: IProject, val document: IDocument, val ideaDocument
     private var currentTokenType: IElementType? = null
 
     override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
+
+        log.debug("Started lexing from $startOffset to $endOffset")
+
         this.buffer = buffer
         this.bufferStart = startOffset
         this.bufferEnd = endOffset
@@ -79,14 +85,20 @@ class AesiLexer(val project: IProject, val document: IDocument, val ideaDocument
             // so we produce a whitespace token to fill up the gap.
             this.currentTokenEnd = currentAesiTokenOffset
             this.currentTokenType = this.tokenTypeManager.defaultTokenType
+
+            log.debug("Advanced to WS $currentTokenType@$currentTokenStart-$currentTokenEnd")
         } else if (currentAesiToken != null){
             // The new current Aesi token starts right at the current token offset,
             // so we produce a corresponding IntelliJ token type to represent it.
             this.currentTokenEnd = Integer.min(currentAesiToken.location.end.toOffset(this.ideaDocument), this.bufferEnd)
             this.currentTokenType = convertToTokenType(currentAesiToken)
+
+            log.debug("Advanced to TK $currentTokenType@$currentTokenStart-$currentTokenEnd with Aesi token $currentAesiToken@$currentAesiTokenOffset (${currentAesiToken.location}, ${currentAesiToken.scope})")
         } else {
             throw InvalidStateException("We've advanced outside the realm of possibilities.")
         }
+
+
     }
 
     private fun advanceAesiTokensUntil(offset: Int) {
