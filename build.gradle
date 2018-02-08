@@ -1,18 +1,15 @@
 buildscript {
-    ext.kotlin_version = '1.0.6'
-    ext.javaVersion = '1.8'
-
     repositories {
         mavenCentral()
         maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.2.5"
+    id "org.jetbrains.intellij" version "0.2.18"
 }
 
 allprojects {
@@ -39,6 +36,15 @@ allprojects {
 
     tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 
+    compileKotlin {
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
+
+        kotlinOptions {
+            jvmTarget = javaVersion
+        }
+    }
+
     sourceSets {
         main {
             java.srcDirs += 'src/main/gen'
@@ -51,14 +57,14 @@ allprojects {
     }
 
     dependencies {
-        compileOnly('com.github.JetBrains:Grammar-Kit:1.5.1') {
+        compileOnly('com.github.JetBrains:Grammar-Kit:2017.1.1') {
             exclude group: 'org.jetbrains.plugins'
             exclude module: 'idea'
         }
 
-        compile     "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+        compile     "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 
-        testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+        testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
         testCompile 'junit:junit:4.11'
     }
 }
